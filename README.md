@@ -6,7 +6,7 @@ Acá vas a buildear tu material. Vas a tener una idea, y la IA te va a ayudar a 
 
 1. Contale a la IA qué querés hacer
 2. La IA codea y pushea
-3. En ~30 segundos está online en `https://taller-XX.majon.xyz`
+3. En ~30 segundos está online en `https://taller-XX.majon-guesher.xyz`
 4. Mirá, decidí qué cambiar, y vuelta a empezar
 
 Después de cada cambio hay que commitear y pushear para que se deploye:

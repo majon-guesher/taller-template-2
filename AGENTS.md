@@ -16,7 +16,7 @@ El taller es corto. Todos se tienen que llevar algo entregable y funcionando onl
 - Repo Git ya inicializado, origin apunta al repo del alumno en GitHub
 - GitHub autenticado en la compu — NO correr `gh auth login`
 - Vercel ya conectado al repo: cada push a main deploya solo
-- URL de producción: `https://taller-XX.majon.xyz` (reemplazar XX por número de compu)
+- URL de producción: `https://taller-XX.majon-guesher.xyz` (reemplazar XX por número de compu)
 - Dominio personalizado en Vercel
 - Sin base de datos. Datos read-only en `/data` como JSON
 - Branch única: main. No hay branches, no hay PRs
