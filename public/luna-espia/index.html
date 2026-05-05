@@ -17,7 +17,6 @@
     <style>
       :root {
         --bg: #050816;
-        --bg-soft: rgba(17, 24, 39, 0.82);
         --card: rgba(10, 15, 31, 0.86);
         --card-border: rgba(255, 255, 255, 0.12);
         --text: #f8fafc;
@@ -76,7 +75,7 @@
       }
 
       .card {
-        width: min(100%, 720px);
+        width: min(100%, 760px);
         position: relative;
         background: linear-gradient(180deg, rgba(20, 28, 51, 0.92), var(--card));
         border: 1px solid var(--card-border);
@@ -125,31 +124,80 @@
         margin-top: 28px;
       }
 
+      .grid-two {
+        display: grid;
+        gap: 16px;
+      }
+
       .input-wrap {
         display: grid;
         gap: 12px;
-        margin: 28px 0 18px;
+        margin: 22px 0 0;
       }
 
-      label {
+      label,
+      legend {
         font-weight: 600;
         color: #e2e8f0;
       }
 
-      input[type="number"] {
+      input[type="number"],
+      input[type="text"] {
         width: 100%;
         border: 1px solid rgba(245, 158, 11, 0.28);
         border-radius: 18px;
         background: rgba(7, 12, 24, 0.88);
         color: var(--text);
-        font-size: 1.2rem;
+        font-size: 1.05rem;
         padding: 16px 18px;
         outline: none;
       }
 
-      input[type="number"]:focus {
+      input[type="number"]:focus,
+      input[type="text"]:focus {
         border-color: rgba(245, 158, 11, 0.72);
         box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.16);
+      }
+
+      fieldset {
+        margin: 22px 0 0;
+        border: none;
+        padding: 0;
+      }
+
+      .choice-grid {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .choice {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 16px 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(245, 158, 11, 0.16);
+        background: rgba(7, 12, 24, 0.7);
+      }
+
+      .choice input {
+        margin-top: 4px;
+        accent-color: var(--accent);
+        transform: scale(1.1);
+      }
+
+      .choice strong {
+        display: block;
+        color: var(--text);
+        margin-bottom: 4px;
+      }
+
+      .choice span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.45;
       }
 
       button {
@@ -177,16 +225,6 @@
         background: var(--accent-dark);
       }
 
-      button.secondary {
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--text);
-        box-shadow: none;
-      }
-
-      button.secondary:hover {
-        background: rgba(255, 255, 255, 0.14);
-      }
-
       .actions {
         display: flex;
         flex-wrap: wrap;
@@ -194,7 +232,8 @@
         margin-top: 24px;
       }
 
-      .word-box {
+      .word-box,
+      .result-item {
         margin-top: 26px;
         padding: 28px 24px;
         border-radius: 24px;
@@ -231,10 +270,21 @@
         color: #94a3b8;
       }
 
+      .result-list {
+        display: grid;
+        gap: 14px;
+        margin-top: 10px;
+      }
+
+      .result-item strong {
+        color: #fde68a;
+      }
+
       .error {
         min-height: 24px;
         color: #fca5a5;
         font-weight: 600;
+        margin-top: 18px;
       }
 
       .moon {
@@ -292,6 +342,12 @@
           width: 100%;
         }
       }
+
+      @media (min-width: 641px) {
+        .grid-two {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
     </style>
   </head>
   <body>
@@ -303,50 +359,107 @@
     </main>
 
     <script>
-      const commonWords = [
-        "Crater",
-        "Astronauta",
-        "Apolo",
-        "Gravedad",
-        "Orbita",
-        "Telescopio",
-        "Almohada",
-        "Cama",
-        "Sueno",
-        "Noche",
-        "Estrellas",
-        "Satelite",
-        "Planeta",
-        "Cielo",
-        "Oscuridad"
-      ];
-
-      const impostorWords = [
-        "Montana",
-        "Piloto",
-        "Cohete",
-        "Peso",
-        "Trayectoria",
-        "Binoculares",
-        "Colchon",
-        "Sillon",
-        "Descanso",
-        "Tarde",
-        "Luciernagas",
-        "Cometa",
-        "Meteorito",
-        "Horizonte",
-        "Sombra"
+      const wordPairs = [
+        {
+          common: "Crater",
+          commonMeaning: "Marca circular en la superficie de la Luna, formada por impactos de rocas espaciales.",
+          impostor: "Montana",
+          impostorMeaning: "Gran elevacion natural del terreno, mucho mas tipica de la Tierra que de la Luna."
+        },
+        {
+          common: "Astronauta",
+          commonMeaning: "Persona entrenada para viajar y trabajar en el espacio.",
+          impostor: "Piloto",
+          impostorMeaning: "Persona que conduce vehiculos como aviones, pero no necesariamente viaja al espacio."
+        },
+        {
+          common: "Apolo",
+          commonMeaning: "Nombre del programa espacial que llevo personas a la Luna.",
+          impostor: "Cohete",
+          impostorMeaning: "Vehiculo que impulsa una nave hacia el espacio."
+        },
+        {
+          common: "Gravedad",
+          commonMeaning: "Fuerza que atrae los cuerpos entre si, como la que nos mantiene sobre el suelo.",
+          impostor: "Peso",
+          impostorMeaning: "Medida de cuanto tira la gravedad sobre un objeto."
+        },
+        {
+          common: "Orbita",
+          commonMeaning: "Camino que sigue un objeto alrededor de otro en el espacio.",
+          impostor: "Trayectoria",
+          impostorMeaning: "Recorrido que hace un objeto al moverse de un lugar a otro."
+        },
+        {
+          common: "Telescopio",
+          commonMeaning: "Instrumento para mirar objetos lejanos, como la Luna o las estrellas.",
+          impostor: "Binoculares",
+          impostorMeaning: "Instrumento para ver mejor a distancia, pero pensado para observaciones mas cercanas."
+        },
+        {
+          common: "Almohada",
+          commonMeaning: "Objeto blando donde apoyamos la cabeza al dormir.",
+          impostor: "Colchon",
+          impostorMeaning: "Base acolchada donde se duerme o descansa."
+        },
+        {
+          common: "Cama",
+          commonMeaning: "Mueble donde dormimos por la noche.",
+          impostor: "Sillon",
+          impostorMeaning: "Asiento comodo para sentarse o descansar."
+        },
+        {
+          common: "Sueno",
+          commonMeaning: "Estado de descanso del cuerpo y la mente mientras dormimos.",
+          impostor: "Descanso",
+          impostorMeaning: "Momento de pausa o relajacion, sin necesidad de estar dormido."
+        },
+        {
+          common: "Noche",
+          commonMeaning: "Parte del dia en la que el cielo esta oscuro y suele verse la Luna.",
+          impostor: "Tarde",
+          impostorMeaning: "Momento del dia antes de la noche, cuando todavia hay luz."
+        },
+        {
+          common: "Estrellas",
+          commonMeaning: "Grandes esferas de gas que brillan en el cielo nocturno.",
+          impostor: "Luciernagas",
+          impostorMeaning: "Insectos pequenos que emiten luz, pero estan en la Tierra."
+        },
+        {
+          common: "Satelite",
+          commonMeaning: "Objeto que gira alrededor de un planeta, natural o artificial.",
+          impostor: "Cometa",
+          impostorMeaning: "Cuerpo de hielo y polvo que viaja por el espacio."
+        },
+        {
+          common: "Planeta",
+          commonMeaning: "Cuerpo celeste grande que gira alrededor de una estrella.",
+          impostor: "Meteorito",
+          impostorMeaning: "Fragmento de roca espacial que llega a caer sobre un planeta."
+        },
+        {
+          common: "Cielo",
+          commonMeaning: "Espacio que vemos sobre nosotros, donde aparecen la Luna y las estrellas.",
+          impostor: "Horizonte",
+          impostorMeaning: "Linea visual donde parece que el cielo se junta con la tierra o el mar."
+        },
+        {
+          common: "Oscuridad",
+          commonMeaning: "Falta de luz, muy asociada a la noche y al espacio.",
+          impostor: "Sombra",
+          impostorMeaning: "Zona oscura que se forma cuando algo tapa la luz."
+        }
       ];
 
       const state = {
         playerCount: 3,
         impostorCount: 1,
+        playerNames: ["", "", ""],
+        impostorMode: "different-word",
         currentPlayer: 0,
         players: [],
-        commonWord: "",
-        impostorWord: "",
-        revealed: false,
+        roundWords: null,
         phase: "setup"
       };
 
@@ -356,7 +469,63 @@
         return Math.floor(Math.random() * max);
       }
 
+      function escapeHtml(text) {
+        return String(text)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function syncPlayerNames(count) {
+        while (state.playerNames.length < count) {
+          state.playerNames.push("");
+        }
+
+        if (state.playerNames.length > count) {
+          state.playerNames = state.playerNames.slice(0, count);
+        }
+      }
+
+      function astronautLabel(index, rawName) {
+        const cleanName = typeof rawName === "string" ? rawName.trim() : "";
+        return cleanName || "Astronauta " + (index + 1);
+      }
+
+      function saveSetupFields() {
+        const playerInput = document.getElementById("playerCount");
+        const impostorInput = document.getElementById("impostorCount");
+        const selectedMode = document.querySelector('input[name="impostorMode"]:checked');
+
+        if (playerInput) {
+          const nextCount = Number(playerInput.value);
+          if (Number.isInteger(nextCount) && nextCount >= 3) {
+            state.playerCount = nextCount;
+            syncPlayerNames(nextCount);
+          }
+        }
+
+        if (impostorInput) {
+          const nextImpostors = Number(impostorInput.value);
+          if (Number.isInteger(nextImpostors)) {
+            state.impostorCount = nextImpostors;
+          }
+        }
+
+        if (selectedMode) {
+          state.impostorMode = selectedMode.value;
+        }
+
+        for (let index = 0; index < state.playerCount; index += 1) {
+          const nameInput = document.getElementById("playerName-" + index);
+          if (nameInput) {
+            state.playerNames[index] = nameInput.value;
+          }
+        }
+      }
+
       function startGame() {
+        saveSetupFields();
         const playerInput = document.getElementById("playerCount");
         const impostorInput = document.getElementById("impostorCount");
         const error = document.getElementById("error");
@@ -381,7 +550,7 @@
           return;
         }
 
-        const pairIndex = randomIndex(Math.min(commonWords.length, impostorWords.length));
+        const roundWords = wordPairs[randomIndex(wordPairs.length)];
         const impostorIndexes = new Set();
 
         while (impostorIndexes.size < impostorCount) {
@@ -390,27 +559,30 @@
 
         state.playerCount = playerCount;
         state.impostorCount = impostorCount;
+        syncPlayerNames(playerCount);
         state.currentPlayer = 0;
-        state.commonWord = commonWords[pairIndex];
-        state.impostorWord = impostorWords[pairIndex];
-        state.revealed = false;
+        state.roundWords = roundWords;
         state.phase = "privacy";
         state.players = Array.from({ length: playerCount }, (_, index) => ({
           id: index + 1,
-          word: impostorIndexes.has(index) ? state.impostorWord : state.commonWord
+          name: astronautLabel(index, state.playerNames[index]),
+          isImpostor: impostorIndexes.has(index),
+          word: impostorIndexes.has(index)
+            ? state.impostorMode === "just-impostor"
+              ? "Impostor"
+              : roundWords.impostor
+            : roundWords.common
         }));
 
         render();
       }
 
       function revealWord() {
-        state.revealed = true;
         state.phase = "reveal";
         render();
       }
 
       function hideAndContinue() {
-        state.revealed = false;
         state.currentPlayer += 1;
 
         if (state.currentPlayer >= state.playerCount) {
@@ -422,14 +594,19 @@
         render();
       }
 
+      function finishGame() {
+        state.phase = "results";
+        render();
+      }
+
       function resetGame() {
         state.playerCount = 3;
         state.impostorCount = 1;
+        state.playerNames = ["", "", ""];
+        state.impostorMode = "different-word";
         state.currentPlayer = 0;
         state.players = [];
-        state.commonWord = "";
-        state.impostorWord = "";
-        state.revealed = false;
+        state.roundWords = null;
         state.phase = "setup";
         render();
       }
@@ -438,23 +615,72 @@
         return state.players[state.currentPlayer];
       }
 
+      function playerNameFields() {
+        return Array.from({ length: state.playerCount }, (_, index) => `
+          <div class="input-wrap">
+            <label for="playerName-${index}">Nombre del participante ${index + 1}</label>
+            <input
+              id="playerName-${index}"
+              type="text"
+              maxlength="24"
+              value="${escapeHtml(state.playerNames[index] || "")}"
+              placeholder="Astronauta ${index + 1}"
+            />
+          </div>
+        `).join("");
+      }
+
       function setupView() {
         return `
           <span class="eyebrow">Mision lunar secreta</span>
           <h1>El Espia de la Luna</h1>
           <p>
-            Un astronauta tiene una palabra distinta. Miren la suya en secreto,
-            despues debatan y descubran quien esta medio colgado en la orbita.
+            Unos pocos se infiltran en la nave. Miren su pista en secreto,
+            debatan y descubran quien esta actuando raro.
           </p>
           <div class="panel">
-            <div class="input-wrap">
-              <label for="playerCount">Cuantos jugadores van a participar</label>
-              <input id="playerCount" type="number" min="3" value="${state.playerCount}" inputmode="numeric" />
+            <div class="grid-two">
+              <div class="input-wrap">
+                <label for="playerCount">Cuantos jugadores van a participar</label>
+                <input id="playerCount" type="number" min="3" value="${state.playerCount}" inputmode="numeric" />
+              </div>
+              <div class="input-wrap">
+                <label for="impostorCount">Cuantos impostores va a haber</label>
+                <input id="impostorCount" type="number" min="1" max="3" value="${state.impostorCount}" inputmode="numeric" />
+              </div>
             </div>
-            <div class="input-wrap">
-              <label for="impostorCount">Cuantos impostores va a haber</label>
-              <input id="impostorCount" type="number" min="1" max="3" value="${state.impostorCount}" inputmode="numeric" />
-            </div>
+            ${playerNameFields()}
+            <fieldset>
+              <legend>Que recibe el impostor</legend>
+              <div class="choice-grid">
+                <label class="choice" for="mode-different">
+                  <input
+                    id="mode-different"
+                    type="radio"
+                    name="impostorMode"
+                    value="different-word"
+                    ${state.impostorMode === "different-word" ? "checked" : ""}
+                  />
+                  <span>
+                    <strong>Palabra distinta</strong>
+                    <span>El impostor ve otra palabra del mismo universo.</span>
+                  </span>
+                </label>
+                <label class="choice" for="mode-label">
+                  <input
+                    id="mode-label"
+                    type="radio"
+                    name="impostorMode"
+                    value="just-impostor"
+                    ${state.impostorMode === "just-impostor" ? "checked" : ""}
+                  />
+                  <span>
+                    <strong>Solo dice "Impostor"</strong>
+                    <span>El impostor no recibe palabra, solo su rol.</span>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
             <div id="error" class="error" aria-live="assertive"></div>
             <div class="actions">
               <button id="startButton">Empezar partida</button>
@@ -467,7 +693,7 @@
         const astronaut = currentAstronaut();
         return `
           <span class="eyebrow">Turno secreto</span>
-          <h2>Pasa el dispositivo al Astronauta ${astronaut.id}</h2>
+          <h2>Pasa el dispositivo a ${escapeHtml(astronaut.name)}</h2>
           <p>
             Cuando estes listo y nadie este mirando, toca el boton para ver tu palabra.
           </p>
@@ -483,14 +709,14 @@
       function revealView() {
         const astronaut = currentAstronaut();
         return `
-          <span class="eyebrow">Solo para Astronauta ${astronaut.id}</span>
+          <span class="eyebrow">Solo para ${escapeHtml(astronaut.name)}</span>
           <h2>Memorizala y cubri la pantalla</h2>
           <div class="word-box">
             <span class="word-label">Tu palabra</span>
-            <p class="word">${astronaut.word}</p>
+            <p class="word">${escapeHtml(astronaut.word)}</p>
             <p class="hint">
-              Pista: no la digas textual. Hace preguntas, responde con calma y
-              trata de encontrar al que esta desfasado.
+              No la digas textual. Hace preguntas, responde con calma
+              y trata de detectar a quien esta inventando sobre la marcha.
             </p>
           </div>
           <div class="actions">
@@ -504,11 +730,41 @@
           <span class="eyebrow">Listo para debatir</span>
           <h2>Todos los astronautas ya tienen su palabra</h2>
           <p>
-            ¡Todos los astronautas tienen su palabra! Es hora de debatir y descubrir
-            quien tiene la palabra distinta.
+            Ya esta. Ahora debatan y descubran quien tiene la palabra distinta
+            o quien recibio el rol de impostor.
           </p>
           <div class="actions">
-            <button id="restartButton">Jugar de nuevo</button>
+            <button id="finishButton">Finalizar juego</button>
+          </div>
+        `;
+      }
+
+      function resultsView() {
+        const impostors = state.players.filter((player) => player.isImpostor);
+        const impostorNames = impostors.map((player) => escapeHtml(player.name)).join(", ");
+        const impostorTitle = state.impostorMode === "just-impostor"
+          ? "Impostor"
+          : state.roundWords.impostor;
+        const impostorMeaning = state.impostorMode === "just-impostor"
+          ? "El jugador impostor no recibio una palabra: solo supo que tenia que mezclarse y no quedar expuesto."
+          : state.roundWords.impostorMeaning;
+
+        return `
+          <span class="eyebrow">Juego finalizado</span>
+          <h2>Asi termino la mision</h2>
+          <p>Los impostores eran ${impostorNames}.</p>
+          <div class="result-list">
+            <div class="result-item">
+              <strong>Palabra comun:</strong> ${escapeHtml(state.roundWords.common)}<br />
+              ${escapeHtml(state.roundWords.commonMeaning)}
+            </div>
+            <div class="result-item">
+              <strong>Palabra impostora:</strong> ${escapeHtml(impostorTitle)}<br />
+              ${escapeHtml(impostorMeaning)}
+            </div>
+          </div>
+          <div class="actions">
+            <button id="restartButton">Nueva partida</button>
           </div>
         `;
       }
@@ -517,6 +773,7 @@
         const startButton = document.getElementById("startButton");
         const revealButton = document.getElementById("revealButton");
         const continueButton = document.getElementById("continueButton");
+        const finishButton = document.getElementById("finishButton");
         const restartButton = document.getElementById("restartButton");
         const playerInput = document.getElementById("playerCount");
         const impostorInput = document.getElementById("impostorCount");
@@ -533,11 +790,19 @@
           continueButton.addEventListener("click", hideAndContinue);
         }
 
+        if (finishButton) {
+          finishButton.addEventListener("click", finishGame);
+        }
+
         if (restartButton) {
           restartButton.addEventListener("click", resetGame);
         }
 
         if (playerInput) {
+          playerInput.addEventListener("input", () => {
+            saveSetupFields();
+            render();
+          });
           playerInput.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
               startGame();
@@ -546,11 +811,31 @@
         }
 
         if (impostorInput) {
+          impostorInput.addEventListener("input", saveSetupFields);
           impostorInput.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
               startGame();
             }
           });
+        }
+
+        const modeInputs = document.querySelectorAll('input[name="impostorMode"]');
+        modeInputs.forEach((input) => {
+          input.addEventListener("change", saveSetupFields);
+        });
+
+        for (let index = 0; index < state.playerCount; index += 1) {
+          const nameInput = document.getElementById("playerName-" + index);
+          if (nameInput) {
+            nameInput.addEventListener("input", () => {
+              state.playerNames[index] = nameInput.value;
+            });
+            nameInput.addEventListener("keydown", (event) => {
+              if (event.key === "Enter") {
+                startGame();
+              }
+            });
+          }
         }
       }
 
@@ -561,8 +846,10 @@
           app.innerHTML = privacyView();
         } else if (state.phase === "reveal") {
           app.innerHTML = revealView();
-        } else {
+        } else if (state.phase === "end") {
           app.innerHTML = endView();
+        } else {
+          app.innerHTML = resultsView();
         }
 
         bindEvents();
