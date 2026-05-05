@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>El Espia de la Luna</title>
+    <meta
+      name="description"
+      content="Juego tipo El Espia con tematica lunar para chicos."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #050816;
+        --bg-soft: rgba(17, 24, 39, 0.82);
+        --card: rgba(10, 15, 31, 0.86);
+        --card-border: rgba(255, 255, 255, 0.12);
+        --text: #f8fafc;
+        --muted: #cbd5e1;
+        --accent: #f59e0b;
+        --accent-dark: #d97706;
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "IBM Plex Sans", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(245, 158, 11, 0.16), transparent 28%),
+          radial-gradient(circle at 85% 18%, rgba(148, 163, 184, 0.14), transparent 20%),
+          linear-gradient(180deg, #071022 0%, var(--bg) 55%, #02040b 100%);
+        overflow-x: hidden;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      body::before {
+        background-image:
+          radial-gradient(2px 2px at 10% 20%, rgba(255, 255, 255, 0.9), transparent),
+          radial-gradient(1.5px 1.5px at 30% 70%, rgba(255, 255, 255, 0.75), transparent),
+          radial-gradient(2px 2px at 72% 28%, rgba(255, 255, 255, 0.95), transparent),
+          radial-gradient(1.5px 1.5px at 80% 68%, rgba(255, 255, 255, 0.8), transparent),
+          radial-gradient(2px 2px at 58% 88%, rgba(255, 255, 255, 0.65), transparent),
+          radial-gradient(1.5px 1.5px at 92% 10%, rgba(255, 255, 255, 0.9), transparent),
+          radial-gradient(2px 2px at 18% 84%, rgba(255, 255, 255, 0.75), transparent);
+        opacity: 0.8;
+      }
+
+      body::after {
+        background:
+          radial-gradient(circle at 78% 16%, rgba(255, 244, 214, 0.88), rgba(255, 244, 214, 0.22) 22%, transparent 24%);
+      }
+
+      .shell {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .card {
+        width: min(100%, 720px);
+        position: relative;
+        background: linear-gradient(180deg, rgba(20, 28, 51, 0.92), var(--card));
+        border: 1px solid var(--card-border);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        padding: 32px;
+        backdrop-filter: blur(18px);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(245, 158, 11, 0.12);
+        color: #fcd34d;
+        font-size: 0.9rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2 {
+        font-family: "Space Grotesk", sans-serif;
+        margin: 0;
+        line-height: 1.02;
+      }
+
+      h1 {
+        margin-top: 18px;
+        font-size: clamp(2.4rem, 6vw, 4.5rem);
+      }
+
+      h2 {
+        font-size: clamp(1.8rem, 4vw, 2.7rem);
+      }
+
+      p {
+        color: var(--muted);
+        font-size: 1.03rem;
+        line-height: 1.6;
+      }
+
+      .panel {
+        margin-top: 28px;
+      }
+
+      .input-wrap {
+        display: grid;
+        gap: 12px;
+        margin: 28px 0 18px;
+      }
+
+      label {
+        font-weight: 600;
+        color: #e2e8f0;
+      }
+
+      input[type="number"] {
+        width: 100%;
+        border: 1px solid rgba(245, 158, 11, 0.28);
+        border-radius: 18px;
+        background: rgba(7, 12, 24, 0.88);
+        color: var(--text);
+        font-size: 1.2rem;
+        padding: 16px 18px;
+        outline: none;
+      }
+
+      input[type="number"]:focus {
+        border-color: rgba(245, 158, 11, 0.72);
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.16);
+      }
+
+      button {
+        border: none;
+        border-radius: 18px;
+        background: var(--accent);
+        color: #10131f;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        padding: 16px 22px;
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        box-shadow: 0 18px 34px rgba(245, 158, 11, 0.24);
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        background: #fbbf24;
+      }
+
+      button:active {
+        transform: translateY(0);
+        background: var(--accent-dark);
+      }
+
+      button.secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        box-shadow: none;
+      }
+
+      button.secondary:hover {
+        background: rgba(255, 255, 255, 0.14);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .word-box {
+        margin-top: 26px;
+        padding: 28px 24px;
+        border-radius: 24px;
+        background:
+          linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(255, 255, 255, 0.06)),
+          rgba(7, 12, 24, 0.92);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+      }
+
+      .word-label {
+        display: block;
+        color: #fde68a;
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      .word {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(2rem, 8vw, 4rem);
+        line-height: 1;
+        margin: 0;
+      }
+
+      .hint {
+        margin-top: 14px;
+        font-size: 0.98rem;
+      }
+
+      .status {
+        margin-top: 20px;
+        font-size: 0.95rem;
+        color: #94a3b8;
+      }
+
+      .error {
+        min-height: 24px;
+        color: #fca5a5;
+        font-weight: 600;
+      }
+
+      .moon {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 30% 30%, #fffbe6 0%, #f8e5a5 35%, #d6c38b 65%, #b89c57 100%);
+        box-shadow: 0 0 35px rgba(245, 158, 11, 0.18);
+      }
+
+      .moon::before,
+      .moon::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(161, 98, 7, 0.14);
+      }
+
+      .moon::before {
+        width: 16px;
+        height: 16px;
+        top: 18px;
+        left: 20px;
+      }
+
+      .moon::after {
+        width: 11px;
+        height: 11px;
+        bottom: 18px;
+        right: 16px;
+      }
+
+      @media (max-width: 640px) {
+        .card {
+          padding: 24px;
+          border-radius: 24px;
+        }
+
+        .moon {
+          width: 62px;
+          height: 62px;
+          top: 18px;
+          right: 18px;
+        }
+
+        .actions {
+          flex-direction: column;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="card" aria-live="polite">
+        <div class="moon" aria-hidden="true"></div>
+        <div id="app"></div>
+      </section>
+    </main>
+
+    <script>
+      const commonWords = [
+        "Crater",
+        "Astronauta",
+        "Apolo",
+        "Gravedad",
+        "Orbita",
+        "Telescopio",
+        "Almohada",
+        "Cama",
+        "Sueno",
+        "Noche",
+        "Estrellas",
+        "Satelite",
+        "Planeta",
+        "Cielo",
+        "Oscuridad"
+      ];
+
+      const impostorWords = [
+        "Montana",
+        "Piloto",
+        "Cohete",
+        "Peso",
+        "Trayectoria",
+        "Binoculares",
+        "Colchon",
+        "Sillon",
+        "Descanso",
+        "Tarde",
+        "Luciernagas",
+        "Cometa",
+        "Meteorito",
+        "Horizonte",
+        "Sombra"
+      ];
+
+      const state = {
+        playerCount: 3,
+        currentPlayer: 0,
+        players: [],
+        commonWord: "",
+        impostorWord: "",
+        revealed: false,
+        phase: "setup"
+      };
+
+      const app = document.getElementById("app");
+
+      function randomIndex(max) {
+        return Math.floor(Math.random() * max);
+      }
+
+      function startGame() {
+        const input = document.getElementById("playerCount");
+        const error = document.getElementById("error");
+        const value = Number(input.value);
+
+        if (!Number.isInteger(value) || value < 3) {
+          error.textContent = "Necesitamos al menos 3 astronautas para jugar.";
+          input.focus();
+          return;
+        }
+
+        const pairIndex = randomIndex(Math.min(commonWords.length, impostorWords.length));
+        const impostorPlayer = randomIndex(value);
+
+        state.playerCount = value;
+        state.currentPlayer = 0;
+        state.commonWord = commonWords[pairIndex];
+        state.impostorWord = impostorWords[pairIndex];
+        state.revealed = false;
+        state.phase = "privacy";
+        state.players = Array.from({ length: value }, (_, index) => ({
+          id: index + 1,
+          word: index === impostorPlayer ? state.impostorWord : state.commonWord
+        }));
+
+        render();
+      }
+
+      function revealWord() {
+        state.revealed = true;
+        state.phase = "reveal";
+        render();
+      }
+
+      function hideAndContinue() {
+        state.revealed = false;
+        state.currentPlayer += 1;
+
+        if (state.currentPlayer >= state.playerCount) {
+          state.phase = "end";
+        } else {
+          state.phase = "privacy";
+        }
+
+        render();
+      }
+
+      function resetGame() {
+        state.playerCount = 3;
+        state.currentPlayer = 0;
+        state.players = [];
+        state.commonWord = "";
+        state.impostorWord = "";
+        state.revealed = false;
+        state.phase = "setup";
+        render();
+      }
+
+      function currentAstronaut() {
+        return state.players[state.currentPlayer];
+      }
+
+      function setupView() {
+        return `
+          <span class="eyebrow">Mision lunar secreta</span>
+          <h1>El Espia de la Luna</h1>
+          <p>
+            Un astronauta tiene una palabra distinta. Miren la suya en secreto,
+            despues debatan y descubran quien esta medio colgado en la orbita.
+          </p>
+          <div class="panel">
+            <div class="input-wrap">
+              <label for="playerCount">Cuantos jugadores van a participar</label>
+              <input id="playerCount" type="number" min="3" value="${state.playerCount}" inputmode="numeric" />
+            </div>
+            <div id="error" class="error" aria-live="assertive"></div>
+            <div class="actions">
+              <button id="startButton">Empezar partida</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function privacyView() {
+        const astronaut = currentAstronaut();
+        return `
+          <span class="eyebrow">Turno secreto</span>
+          <h2>Pasa el dispositivo al Astronauta ${astronaut.id}</h2>
+          <p>
+            Cuando estes listo y nadie este mirando, toca el boton para ver tu palabra.
+          </p>
+          <div class="actions">
+            <button id="revealButton">Ver mi palabra</button>
+          </div>
+          <p class="status">
+            Van ${state.currentPlayer + 1} de ${state.playerCount} astronautas.
+          </p>
+        `;
+      }
+
+      function revealView() {
+        const astronaut = currentAstronaut();
+        return `
+          <span class="eyebrow">Solo para Astronauta ${astronaut.id}</span>
+          <h2>Memorizala y cubri la pantalla</h2>
+          <div class="word-box">
+            <span class="word-label">Tu palabra</span>
+            <p class="word">${astronaut.word}</p>
+            <p class="hint">
+              Pista: no la digas textual. Hace preguntas, responde con calma y
+              trata de encontrar al que esta desfasado.
+            </p>
+          </div>
+          <div class="actions">
+            <button id="continueButton">Ocultar y continuar</button>
+          </div>
+        `;
+      }
+
+      function endView() {
+        return `
+          <span class="eyebrow">Listo para debatir</span>
+          <h2>Todos los astronautas ya tienen su palabra</h2>
+          <p>
+            ¡Todos los astronautas tienen su palabra! Es hora de debatir y descubrir
+            quien tiene la palabra distinta.
+          </p>
+          <div class="actions">
+            <button id="restartButton">Jugar de nuevo</button>
+          </div>
+        `;
+      }
+
+      function bindEvents() {
+        const startButton = document.getElementById("startButton");
+        const revealButton = document.getElementById("revealButton");
+        const continueButton = document.getElementById("continueButton");
+        const restartButton = document.getElementById("restartButton");
+        const input = document.getElementById("playerCount");
+
+        if (startButton) {
+          startButton.addEventListener("click", startGame);
+        }
+
+        if (revealButton) {
+          revealButton.addEventListener("click", revealWord);
+        }
+
+        if (continueButton) {
+          continueButton.addEventListener("click", hideAndContinue);
+        }
+
+        if (restartButton) {
+          restartButton.addEventListener("click", resetGame);
+        }
+
+        if (input) {
+          input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+              startGame();
+            }
+          });
+        }
+      }
+
+      function render() {
+        if (state.phase === "setup") {
+          app.innerHTML = setupView();
+        } else if (state.phase === "privacy") {
+          app.innerHTML = privacyView();
+        } else if (state.phase === "reveal") {
+          app.innerHTML = revealView();
+        } else {
+          app.innerHTML = endView();
+        }
+
+        bindEvents();
+      }
+
+      render();
+    </script>
+  </body>
+</html>
