@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Serif, Space_Grotesk } from "next/font/google";
+import CieloNocturno from "@/components/cielo-nocturno";
 import "./globals.css";
 
 const display = Instrument_Serif({
@@ -29,7 +30,8 @@ export default function RootLayout({
       lang="es"
       className={`${display.variable} ${grotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#05060B] font-[family-name:var(--font-grotesk)] text-[#EFE7D6]">
+      <body className="min-h-full flex flex-col bg-[#05060F] font-[family-name:var(--font-grotesk)] text-[#EFE7D6]">
+        <CieloNocturno />
         {children}
       </body>
     </html>

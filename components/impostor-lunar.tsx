@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import Almohada from "@/components/almohada";
+
 type Par = { tripulacion: string; impostor: string };
 type Fase = "setup" | "reparto" | "ronda" | "votacion" | "resultado";
 
@@ -108,7 +110,13 @@ export default function ImpostorLunar({ pares }: { pares: Par[] }) {
           tienen la misma. Uno no. Y ni él lo sabe.
         </p>
 
-        <div className="mt-10 flex gap-2">
+        <div className="mt-9 flex justify-center">
+          <div className="w-[190px] rotate-[-5deg] opacity-90">
+            <Almohada oculta />
+          </div>
+        </div>
+
+        <div className="mt-9 flex gap-2">
           <input
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
@@ -173,32 +181,23 @@ export default function ImpostorLunar({ pares }: { pares: Par[] }) {
           Pasale el celu a {quien}
         </h2>
 
-        <div className="mt-10 flex min-h-64 select-none items-center justify-center rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-          {mostrando ? (
-            <div className="text-center">
-              <p className="text-xs uppercase tracking-[0.3em] text-[#8A8FA3]">
-                Tu palabra
-              </p>
-              <p className="mt-3 font-[family-name:var(--font-display)] text-5xl text-[#FFD23F]">
-                {palabraDe(indice)}
-              </p>
-              <p className="mt-4 text-xs text-[#8A8FA3]">Soltá para ocultar</p>
-            </div>
-          ) : (
-            <button
-              onPointerDown={() => {
-                setMostrando(true);
-                setVisto(true);
-              }}
-              onPointerUp={() => setMostrando(false)}
-              onPointerLeave={() => setMostrando(false)}
-              onPointerCancel={() => setMostrando(false)}
-              onContextMenu={(e) => e.preventDefault()}
-              className="touch-none rounded-full border border-[#FFD23F]/40 px-8 py-5 text-base font-semibold text-[#FFD23F]"
-            >
-              Mantené apretado
-            </button>
-          )}
+        <div className="mt-10 flex select-none flex-col items-center">
+          <button
+            onPointerDown={() => {
+              setMostrando(true);
+              setVisto(true);
+            }}
+            onPointerUp={() => setMostrando(false)}
+            onPointerLeave={() => setMostrando(false)}
+            onPointerCancel={() => setMostrando(false)}
+            onContextMenu={(e) => e.preventDefault()}
+            className="flex w-full touch-none justify-center transition-transform active:scale-[0.97]"
+          >
+            <Almohada palabra={palabraDe(indice)} oculta={!mostrando} />
+          </button>
+          <p className="mt-7 text-xs uppercase tracking-[0.3em] text-[#8A8FA3]">
+            {mostrando ? "Soltá para ocultar" : "Mantené apretada la almohada"}
+          </p>
         </div>
 
         <button
@@ -387,13 +386,19 @@ export default function ImpostorLunar({ pares }: { pares: Par[] }) {
           <p className="mt-2 font-[family-name:var(--font-display)] text-5xl text-[#FFD23F]">
             {jugadores[impostor]}
           </p>
-          <div className="mt-6 space-y-1 text-sm text-[#8A8FA3]">
-            <p>
-              Tripulación: <span className="text-[#EFE7D6]">{par.tripulacion}</span>
-            </p>
-            <p>
-              Impostor: <span className="text-[#EFE7D6]">{par.impostor}</span>
-            </p>
+          <div className="mt-7 grid grid-cols-2 gap-4">
+            <div className="flex flex-col items-center gap-3">
+              <Almohada palabra={par.tripulacion} />
+              <p className="text-[10px] uppercase tracking-[0.25em] text-[#8A8FA3]">
+                Tripulación
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <Almohada palabra={par.impostor} />
+              <p className="text-[10px] uppercase tracking-[0.25em] text-[#FFD23F]">
+                Impostor
+              </p>
+            </div>
           </div>
         </div>
       )}
